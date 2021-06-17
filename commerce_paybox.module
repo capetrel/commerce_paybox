@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Integrates PayBox System payment with IPN in Drupal Commerce.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function commerce_paybox_help($route_name, RouteMatchInterface $route_match) {
+  if ($route_name == 'help.page.commerce_paybox') {
+    $output = '';
+
+    $output .= '<h3>' . t('How does it work?') . '</h3>';
+    $output .= '<ul>';
+    $output .= '<li>' . t('Authentication of the POST HTTP message (based on a unique HMAC key) from the merchant site') . '</li>';
+    $output .= '<li>' . t('Redirection of the user from the merchant site to the Paybox transaction page or include it in an iframe') . '</li>';
+    $output .= '<li>' . t('Sending the total amount of the shopping basket, in cents, (taxes and delivery costs included) to the payment gateway') . '</li>';
+    $output .= '<li>' . t('Manage the PayBox POST HTTP returns (four possible redirects: PBX_EFFECTUE, PBX_REFUSE, PBX_ANNULE, PBX_REPONDRE_A)') . '</li>';
+    $output .= '<li>' . t('Payment type accept: credit card, subscription, transfer') . '</li>';
+    $output .= '<li>' . t('Display of the transaction success or error message in the store' ). '</li>';
+    $output .= '</ul>';
+    $output .= '<ul>';
+    $output .= '<h3>' . t('Documentation') . '</h3>';
+    $output .= '<li>' . '<a href="https://admin.paybox.com/" target="_blank">'.t('Paybox administration console (production)').'</a>'  . '</li>';
+    $output .= '<li>' . '<a href="https://preprod-admin.paybox.com/" target="_blank">'.t('Paybox administration console (test)').'</a>'  . '</li>';
+    $output .= '<li>' . '<a href="http://www1.paybox.com/espace-integrateur-documentation/la-solution-paybox-system/" target="_blank">'.t('PAYBOX SYSTEM\'s guide').'</a>'  . '</li>';
+    $output .= '<li>' . '<a href="http://www1.paybox.com/espace-integrateur-documentation/modules-by-paybox/" target="_blank">'.t('Other modules').'</a>' . '</li>';
+    $output .= '<li>' . '<a href="https://docs.drupalcommerce.org/commerce2/developer-guide/payments/create-payment-gateway/getting-started" target="_blank">'.t('Create payment in Drupal Commerce').'</a>' . '</li>';
+    $output .= '</ul>';
+    return $output;
+  }
+  return false;
+}
+
+/**
+ * Implements hook_form_alter(). Alter Paybox form before pushing it to Verifone service
+ */
+function commerce_paybox_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'commerce_checkout_flow_multistep_default') {
+    if($form['#step_id'] === 'payment') {
+      $form['#pre_render'][] = '_paybox_clean_form';
+    }
+  }
+}
+
+/**
+ * Remove some variables in Paybox form.
+ *
+ * @param array $form The form render array.
+ * @return array
+ */
+function _paybox_clean_form($form) {
+  $keys = ['form_token', 'form_build_id', 'form_id', 'op'];
+  foreach ($keys as $key) {
+    if (isset($form[$key])) {
+      unset($form[$key]);
+    }
+  }
+  return $form;
+}

@@ -1,0 +1,31 @@
+commerce_payment.commerce_payment_gateway.plugin.paybox_redirect_checkout:
+  type: commerce_payment_gateway_configuration
+  mapping:
+    pbx_site:
+      type: string
+      label: 'Site number'
+    pbx_rang:
+      type: string
+      label: 'Rank number'
+    pbx_identifiant:
+      type: string
+      label: 'Paybox ID'
+    pbx_hmac:
+      type: string
+      label: 'HMAC key'
+    pbx_authorized_ips:
+      type: string
+      label: 'Authorized ips on callback urls'
+    pbx_iframe:
+      type: boolean
+      label: 'Include in site'
+    iframe_width:
+      type: sequence
+        label: 'Iframe width'
+        sequence:
+          type: string
+    iframe_height:
+      type: sequence
+        label: 'Iframe height'
+        sequence:
+          type: string
