@@ -15,6 +15,7 @@ function commerce_paybox_help($route_name, RouteMatchInterface $route_match) {
     $output = '';
 
     $output .= '<h3>' . t('How does it work?') . '</h3>';
+    $output .= '<p>' . t('Work in progress') . '</p>';
     $output .= '<ul>';
     $output .= '<li>' . t('Authentication of the POST HTTP message (based on a unique HMAC key) from the merchant site') . '</li>';
     $output .= '<li>' . t('Redirection of the user from the merchant site to the Paybox transaction page or include it in an iframe') . '</li>';
